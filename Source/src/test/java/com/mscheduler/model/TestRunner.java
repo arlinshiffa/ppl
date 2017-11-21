@@ -16,14 +16,23 @@ import org.junit.runner.notification.Failure;
 public class TestRunner {
 
     public static void main(String[] args) {
-       Result invitationTestResult = JUnitCore.runClasses(InvitationTest.class);
-		
-      System.out.println("---Test Invitation---");
-      for (Failure failure : invitationTestResult.getFailures()) {
-         System.out.println(failure.toString());
-      }
-		
-      System.out.println(invitationTestResult.wasSuccessful());
+       Result invitationTestResult = JUnitCore.runClasses(Invitation.class);
+
+        System.out.println("---Test Invitation---");
+        for (Failure failure : invitationTestResult.getFailures()) {
+            System.out.println(failure.toString());
+        }
+
+        System.out.println(invitationTestResult.wasSuccessful());
+        
+        Result dateRangeTestResult = JUnitCore.runClasses(DateRange.class);
+
+        System.out.println("---Test DateRange---");
+        for (Failure failure : dateRangeTestResult.getFailures()) {
+            System.out.println(failure.toString());
+        }
+
+        System.out.println(dateRangeTestResult.wasSuccessful());
         
          
     }
