@@ -5,8 +5,6 @@
  */
 package com.mscheduler.model;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import org.junit.AfterClass;
@@ -150,7 +148,6 @@ public class InvitationTest {
         Invitation instance = new Invitation();
         instance.setStatus(status);
         // TODO review the generated test code and remove the default call to fail.
-        
     }
     
 }

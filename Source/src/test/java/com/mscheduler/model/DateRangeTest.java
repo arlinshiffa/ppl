@@ -5,11 +5,13 @@
  */
 package com.mscheduler.model;
 
+import com.mscheduler.Config;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,10 +56,9 @@ public class DateRangeTest {
     @Test
     public void testLocalDateTimeToDate() {
         System.out.println("localDateTimeToDate");
-        LocalDateTime ldate = LocalDateTime.now();
         DateRange instance = new DateRange();
-        Date expResult = new Date(2017,12,12);
-        Date result = instance.localDateTimeToDate(ldate);
+        Date expResult = Date.from(LocalDateTime.ofInstant(new Date(2017,12,12).toInstant(), ZoneId.systemDefault()).atZone(ZoneId.systemDefault()).toInstant());
+        Date result = instance.localDateTimeToDate(LocalDateTime.ofInstant(new Date(2017,12,12).toInstant(), ZoneId.systemDefault()));
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
        
@@ -69,9 +70,10 @@ public class DateRangeTest {
     @Test
     public void testGetDate_start() {
         System.out.println("getDate_start");
-        DateRange instance = new DateRange();
-        Date expResult = null;
-        Date result = instance.getDate_start();
+        Date start=new Date(2017,12,12);
+        Date end=new Date(2017,12,13);
+        Date expResult = start;
+        Date result = new DateRange(start, end).getDate_start();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         
@@ -96,8 +98,10 @@ public class DateRangeTest {
     @Test
     public void testGetDate_end() {
         System.out.println("getDate_end");
-        DateRange instance = new DateRange();
-        Date expResult = null;
+        Date start=new Date(2017,12,12);
+        Date end=new Date(2017,12,13);
+        DateRange instance = new DateRange(start, end);
+        Date expResult = end;
         Date result = instance.getDate_end();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -123,8 +127,10 @@ public class DateRangeTest {
     @Test
     public void testLocalDateStart() {
         System.out.println("localDateStart");
-        DateRange instance = new DateRange();
-        LocalDateTime expResult = null;
+        Date start=new Date(2017,12,12);
+        Date end=new Date(2017,12,13);
+        DateRange instance = new DateRange(start, end);
+        LocalDateTime expResult = instance.dateToLocalDateTime(start);
         LocalDateTime result = instance.localDateStart();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -137,8 +143,9 @@ public class DateRangeTest {
     @Test
     public void testSetLocalDate_start() {
         System.out.println("setLocalDate_start");
-        LocalDateTime date_start = null;
         DateRange instance = new DateRange();
+        Date start=new Date(2017,12,12);
+        LocalDateTime date_start=instance.dateToLocalDateTime(start);
         instance.setLocalDate_start(date_start);
         // TODO review the generated test code and remove the default call to fail.
        
@@ -150,8 +157,10 @@ public class DateRangeTest {
     @Test
     public void testLocalDateEnd() {
         System.out.println("localDateEnd");
-        DateRange instance = new DateRange();
-        LocalDateTime expResult = null;
+        Date start=new Date(2017,12,12);
+        Date end=new Date(2017,12,13);
+        DateRange instance = new DateRange(start, end);
+        LocalDateTime expResult = instance.dateToLocalDateTime(end);
         LocalDateTime result = instance.localDateEnd();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -164,8 +173,9 @@ public class DateRangeTest {
     @Test
     public void testSetLocalDate_end() {
         System.out.println("setLocalDate_end");
-        LocalDateTime date_end = null;
+        Date end=new Date(2017,12,13);
         DateRange instance = new DateRange();
+        LocalDateTime date_end = instance.dateToLocalDateTime(end);
         instance.setLocalDate_end(date_end);
         // TODO review the generated test code and remove the default call to fail.
        
@@ -236,8 +246,11 @@ public class DateRangeTest {
     @Test
     public void testToString() {
         System.out.println("toString");
-        DateRange instance = new DateRange();
-        String expResult = "";
+        Date start=new Date(2017,12,12);
+        Date end=new Date(2017,12,13);
+        DateRange instance = new DateRange(start, end);
+        String expResult = instance.dateToLocalDateTime(start).format(Config.DATETIME_OUTPUT_FORMATTER);
+        expResult+=" - "+instance.dateToLocalDateTime(end).format(Config.DATETIME_OUTPUT_FORMATTER);
         String result = instance.toString();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -251,7 +264,7 @@ public class DateRangeTest {
     public void testToString2() {
         System.out.println("toString2");
         DateRange instance = new DateRange();
-        String expResult = "";
+        String expResult = instance.toString();
         String result = instance.toString2();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -264,11 +277,10 @@ public class DateRangeTest {
     @Test
     public void testIsOverlap() {
         System.out.println("isOverlap");
-        DateRange dr2 = null;
-        DateRange instance = new DateRange();
-        boolean expResult = false;
-        boolean result = instance.isOverlap(dr2);
-        assertEquals(expResult, result);
+        DateRange dr1=new DateRange(new Date(2017,12,12), new Date(2017, 12, 13));
+        DateRange dr2=new DateRange(new Date(2017, 12, 13), new Date(2017,12,14));
+        boolean result=dr1.isDateRangeBetween(dr2)||dr1.isDateBetween(dr2.localDateStart())||dr1.isDateBetween(dr2.localDateEnd());
+        assertEquals(result, dr1.isOverlap(dr2));
         // TODO review the generated test code and remove the default call to fail.
        
     }
@@ -279,11 +291,12 @@ public class DateRangeTest {
     @Test
     public void testMergeDate() {
         System.out.println("mergeDate");
-        DateRange dr = null;
-        DateRange instance = new DateRange();
-        instance.mergeDate(dr);
+        DateRange dr=new DateRange(new Date(2017, 12, 12), new Date(2017, 12, 15));
+        DateRange dr1=new DateRange(new Date(2017, 12, 12), new Date(2017, 12, 14));
+        DateRange dr2=new DateRange(new Date(2017, 12, 14),new Date(2017, 12, 15));
+        dr1.mergeDate(dr2);
+        assertTrue(dr.localDateStart().equals(dr1.localDateStart())&&dr.localDateEnd().equals(dr1.localDateEnd()));
         // TODO review the generated test code and remove the default call to fail.
-        
     }
 
     /**
@@ -292,9 +305,11 @@ public class DateRangeTest {
     @Test
     public void testIsOverlapAny() {
         System.out.println("isOverlapAny");
-        List<DateRange> conflicted_meeting_time = null;
-        DateRange instance = new DateRange();
+        List<DateRange> conflicted_meeting_time = new LinkedList<DateRange>();
+        conflicted_meeting_time.add(new DateRange(new Date(2017, 12, 12), new Date(2017, 12, 13)));
+        conflicted_meeting_time.add(new DateRange(new Date(2017, 12, 14),new Date(2017, 12, 15)));
         boolean expResult = false;
+        DateRange instance=new DateRange();
         boolean result = instance.isOverlapAny(conflicted_meeting_time);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
