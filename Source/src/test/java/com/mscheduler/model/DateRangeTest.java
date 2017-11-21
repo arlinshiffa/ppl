@@ -56,7 +56,7 @@ public class DateRangeTest {
         System.out.println("localDateTimeToDate");
         LocalDateTime ldate = LocalDateTime.now();
         DateRange instance = new DateRange();
-        Date expResult = new Date();
+        Date expResult = new Date(2017,12,12);
         Date result = instance.localDateTimeToDate(ldate);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
